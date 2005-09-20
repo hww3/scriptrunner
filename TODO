@@ -1,0 +1,4 @@
+- Add an inline code processor for things like <? somepikecodehere ?>
+- Include some convenience functions for performing common tasks like 
+    generating control mappings.
+- Error checking and handling. Right now, we're running with scissors.

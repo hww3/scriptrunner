@@ -12,7 +12,8 @@ int main(int argc, array(string) argv)
 {
   int sock;
 
-  logfile=Stdio.File(logfile_path, "rwac");
+  if(logfile_path)
+    logfile=Stdio.File(logfile_path, "rwac");
 
   Stdio.File f = Stdio.stdin.dup();
   
@@ -144,6 +145,8 @@ object get_script(string path, object id)
 
 void log(string t, mixed ... args)
 {
+  if(!logfile) return;
+
   if(args)
     t = sprintf(t, @args);
   logfile->write(sprintf("[%s] %s", (ctime(time())- "\n"), t));

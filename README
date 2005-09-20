@@ -1,0 +1,77 @@
+From hww3@riverweb.com Tue Sep 20 17:29:16 2005
+Date: Tue, 20 Sep 2005 17:24:42 -0400 (EDT)
+From: Bill Welliver <hww3@riverweb.com>
+Reply-To: caudium-general@caudium.net
+To: pike@roxen.com, roxen@roxen.com, caudium-general@caudium.net
+Subject: [caudium-general] [Annouce] Pike ScriptRunner FastCGI
+
+Greetings!
+
+In yet another in a long string of rapid-fire ideas turned into alpha
+quality code, I'd like to annouce the availability of the Pike
+ScriptRunner. ScriptRunner is a FastCGI application that will
+(hopefully) run under pretty much any web server that supports FastCGI.
+The ScriptRunner allow you to run pike scripts under non-pike based web
+servers. Because ScriptRunner uses FastCGI, its performance should be
+close to embedded language solutions like mod_perl, but with a lot
+less worries about security and overflows. With ScriptRunner you can
+introduce all of your friends to Pike without forcing them to suffer
+bad performance or the (more likely) attachment to Apache. In addition,
+ScriptRunner does a lot of the unpleasant work of parsing incoming
+requests, allowing you to get right to the task of writing your code.
+
+Right now, it's pretty early on in its development, so there are a lot of
+niceties present in Roxen or Caudium that aren't available, and it's not
+terribly well tested, so it could have some nasty bugs. Enough raw
+functionality is available to be highly useful; hopefully there will be
+interest in improving things in this area. ScriptRunner contains code
+written by others over the years; this is really more of a gathering of
+snippets into something more readily useful to others.
+
+Requirements:
+
+Pike 7.6+
+libfastcgi (available from http://www.fastcgi.com)
+Public.Web.FastCGI (available from
+http://www.siriushosting.com/pike/fastcgi.html)
+
+Features:
+
+- Multi-threaded request handling
+- Compiled object caching
+- Incoming requests are parsed and passed to you in a request id object.
+- Handles FCGI processing for you. Just return a string or control mapping
+  from your parse() method.
+
+Installation:
+
+Get the snapshot tarball here:
+
+http://buoy.riverweb.com:8080/viewrep/cvs/scriptrunner
+
+Some example scripts are included to give you a head start. Simply copy
+the scriptrunner files to a FastCGI enabled web server. Edit the
+scriptrunner application to specify an optional log file (recommended).
+Add a redirect to convert all requests to (*.pike) to
+/path/to/scriptrunner.fcgi($1) (actual syntax will vary based on the
+redirector you're using.
+
+Comments, Feedback and Participation:
+
+I welcome all of these, especially if you're interested in helping to
+debug and enhance the code. Contact me if you'd like to help out.
+
+Best regards,
+
+Bill
+
+
+    [ Part 2: "Attached Text" ]
+
+
+_______________________________________________
+Caudium-general mailing list
+caudium-general@caudium.net
+http://lists.oav.net/wws/info/caudium-general
+Archives are : http://lists.oav.net/wws/arc/caudium-general
+Caudium Website : http://caudium.net/

@@ -46,8 +46,27 @@ void request_loop(int sock, int id)
                      retval = s->parse(request_id);
                      if(!stringp(retval))
                      {
-                        request->write("Content-type: text/plain\r\n\r\n");
-                        request->write("%O", retval);
+                        if(mappingp(retval))
+                        {
+
+                          if(!retval->_error)
+                            retval->_error = 200;
+
+                          request->write("Status: %d\r\n", retval->_error);
+
+                          foreach(retval->_headers; string hname; string hvalue)
+                            request->write("%s: %s\r\n", String.capitalize(hname), hvalue);
+
+                          request->write("\r\n");
+
+                          // TODO: don't think we can get it all in one call.
+                          if(objectp(retval->data))
+                            request->write(retval->data->read());
+                          else if(retval->data)
+                            request->write(retval->data);
+
+                        } 
+                        else error("Invalid return value from parse().\n");
                      }
                      else
                      {
@@ -78,8 +97,11 @@ void request_loop(int sock, int id)
                        log("got an error: %O\n", e);
                      request->write("Content-type: text/html\r\n\r\n");
                      request->write("an error occurred while compiling the script:\n");
-                     request->write("<pre>\n%s\n</pre>", e->describe()); 
-                     request->finish();
+                     if(objectp(e))
+                       request->write("<pre>\n%s\n</pre>", e->describe()); 
+                     else  
+                       request->write("<pre>\n%O\n</pre>", e); 
+                   request->finish();
                   }
 
 

@@ -1,0 +1,37 @@
+Installing FastCGI Support and ScriptRunner for Apache
+
+Prerequisites:
+
+1. Pike 7.6 or higher
+
+2. libfcgi from http://www.fastcgi.com
+
+3. Public.Web.FCGI from http://www.siriushosting.com/pike/fastcgi.html
+
+Installation:
+
+1. Download mod_fastcgi for Apache from http://www.fastcgi.com.
+
+2. Install mod_fastcgi. Instructions for doing this are included with mod_fastcgi.
+
+3. Add the ExecCGI option to the directory that contains scriptrunner:
+
+<Directory ...>
+Options ... ExecCGI
+</Directory>
+
+4. Add the mod_fastcgi configuration parameters:
+
+ <IfModule mod_fastcgi.c>
+     FastCgiIpcDir /tmp
+     AddHandler fastcgi-script fcgi
+ </IfModule>
+
+5. Copy the ScriptRunner directory into your Apache document root.
+
+6. You may want to use mod_rewrite to rewrite incoming requests for pike scripts to 
+ScriptRunner.
+
+Note that there are many configuration options for mod_fastcgi, and these are only a 
+suggestion (and perhaps not a good one at that!) Comments and suggestions are welcome.
+

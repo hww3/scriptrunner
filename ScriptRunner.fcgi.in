@@ -50,6 +50,8 @@ void request_loop(int sock, int id)
                         if(mappingp(retval))
                         {
 
+                          if(!retval->_headers)
+                            retval->_headers = ([]);
                           if(!retval->error)
                             retval->error = 200;
                           if(!retval->type)

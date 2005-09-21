@@ -126,7 +126,10 @@ private void decode_post()
 
 string getenv(string key)
 {
-  if(!fast_cgi_request) return 0;
+  if(!fast_cgi_request) 
+    return 0;
+  if(!fast_cgi_request->env[key])
+    return 0;
   else return fast_cgi_request->env[key];
 }
 

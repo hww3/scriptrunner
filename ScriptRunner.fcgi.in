@@ -50,10 +50,13 @@ void request_loop(int sock, int id)
                         if(mappingp(retval))
                         {
 
-                          if(!retval->_error)
-                            retval->_error = 200;
+                          if(!retval->error)
+                            retval->error = 200;
+                          if(!retval->type)
+                            retval->type = "text/html";
 
-                          request->write("Status: %d\r\n", retval->_error);
+                          request->write("Status: %d\r\n", retval->error);
+                          request->write("Content-type: %s\r\n", retval->type);
 
                           foreach(retval->_headers; string hname; string hvalue)
                             request->write("%s: %s\r\n", String.capitalize(hname), hvalue);

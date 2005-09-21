@@ -38,6 +38,7 @@ http://www.siriushosting.com/pike/fastcgi.html)
 Features:
 
 - Multi-threaded request handling
+- Persistent interpreter
 - Compiled object caching
 - Incoming requests are parsed and passed to you in a request id object.
 - Handles FCGI processing for you. Just return a string or control mapping
@@ -45,33 +46,121 @@ Features:
 
 Installation:
 
+Apache users: see the file INSTALL.Apache for information on configuring 
+Apache support for FastCGI.
+
 Get the snapshot tarball here:
 
 http://buoy.riverweb.com:8080/viewrep/cvs/scriptrunner
 
-Some example scripts are included to give you a head start. Simply copy
-the scriptrunner files to a FastCGI enabled web server. Edit the
-scriptrunner application to specify an optional log file (recommended).
+Simply copy the scriptrunner files to a FastCGI enabled web server (it's 
+recommended that you just copy the whole ScriptRunner directory. 
+
+Edit the scriptrunner application to specify an optional log file 
+(recommended).
+
 Add a redirect to convert all requests to (*.pike) to
 /path/to/scriptrunner.fcgi($1) (actual syntax will vary based on the
 redirector you're using.
+
+Some example scripts are included to give you a head start. 
+
+
+Writing Pike Scripts:
+
+First of all, you should know how to write code in the Pike language. It's 
+pretty easy, and if you're accustomed to C-like languages, such as C or 
+Java, you should be able to pick things up in a few minutes.
+
+A pike script must impliment the following method:
+
+string|mapping parse(RequestID request_id);
+
+request_id is an object that contains the request information, all broken 
+down into the most important components. Accessing the scriptrunner 
+application without providing a script file will give you an example of 
+what's contained in the RequestID object.
+
+Some important members of a RequestID object:
+
+variables: a mapping containing key-value pairs for all passed query and 
+POST variables. ScriptRunner does not differentiate between GET and POST 
+variables.
+
+cookies: a mapping containing key-value pairs for all cookies provided to 
+the server during the request.
+
+query: the contents of the request string following the ?
+
+method: the HTTP method sent by the client.
+
+client: an array containing elements of the client agent being used.
+
+pragma: a multiset containing any pragma keys sent by the client agent. 
+the most common of these is "no-cache".
+
+prot: the http protocol and version, for example: HTTP/1.0.
+
+referrer: an array containing the referrer.
+
+remoteaddr: the client's ip address
+
+remotehost: the client's remote hostname, if available.
+
+misc: a mapping containing miscellaneous information about the request. 
+
+Your parse() function can run any pike code you'd like, and when you're 
+done, it should return either a string containing the HTML content to 
+return to the browser, or a "control" mapping. A control mapping is a 
+mapping that contains certain indices that control the response returned 
+to the browser. You'd want to return a mapping if you need to alter the 
+content type of the result, or if you want to add special headers or 
+change the status code. example2.pike gives you an example of a control 
+mapping used to perform a HTTP redirect. Future releases of ScriptRunner 
+will provide convenience functions that will generate appropriate control 
+mappings for you. Until then, Here are the contents (and default falues):
+
+([
+    /* the result code to return, 200 is "OK" */
+    "error" : 200    
+
+    /* the mime content type to return */
+    "type" : "content/html"  
+
+    /* a string or Stdio.File object containing the data to return. If a 
+       File object, the data will be read() from the object. Not required,
+       strictly speaking, but it is normally important to provide. */
+    "data" : UNDEFINED  
+
+    /* a mapping containing response headers to provide */
+    "_headers" : UNDEFINED
+])
+
+Do note that the contents of this mapping may change once convenience 
+functions arrive. If you find yourself performing a large number of string 
+concatenations to create the result string, you may want to consider using 
+String.Buffer, which can improve the performance of your application in 
+these situations. See the Pike module reference for more information on 
+String.Buffer.
+
+Upon successful compilation of your script, it will be instantiated into 
+an object, so you can provide create() and destroy() methods to control 
+startup and shutdown of services required by parse(). Note that upon 
+compilation, scripts are cached. Scripts can currently be reloaded by 
+sending the Pragma: no-cache header (by doing a "super reload" using 
+mozilla based browsers). Do not count on destroy() to be called 
+immediately upon destruction, as there may be a delay between the script 
+being recompiled and garbage collection, which forces destroy() to be 
+called. 
+
+In the event of a compilation failure, the error will be displayed to the 
+client and written to a log file. Compilation retries will occurr on 
+subsequent requests. In the event of an uncaught error exception, an 
+error and stacktrace will be returned to the browser, as well as written 
+to the log file. 
 
 Comments, Feedback and Participation:
 
 I welcome all of these, especially if you're interested in helping to
 debug and enhance the code. Contact me if you'd like to help out.
 
-Best regards,
-
-Bill
-
-
-    [ Part 2: "Attached Text" ]
-
-
-_______________________________________________
-Caudium-general mailing list
-caudium-general@caudium.net
-http://lists.oav.net/wws/info/caudium-general
-Archives are : http://lists.oav.net/wws/arc/caudium-general
-Caudium Website : http://caudium.net/

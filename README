@@ -63,6 +63,29 @@ Add a redirect to convert all requests to (*.pike) to
 /path/to/scriptrunner.fcgi($1) (actual syntax will vary based on the
 redirector you're using.
 
+For example, if I've installed ScriptRunner so that the ScriptRunner.fcgi 
+is called by the following request:
+
+http://www.mysite.com/path/to/ScriptRunner.fcgi
+
+and I put a pike script in /some/other/path.pike on my website, I need my 
+redirect to internally change
+
+http://www.mysite.com/some/other/path.pike
+
+to
+
+http://www.mysite.com/path/to/ScriptRunner.fcgi/some/other/path.pike
+
+This is a common technique used by PHP and other languages. Alternately, 
+you could use mod_actions to do the same thing:
+
+   AddHandler scriptrunner-pike-script .pike
+   Action scriptrunner-pike-script /path/to/ScriptRunner.fcgi
+
+In the long run, this may be a simpler option.
+
+
 Some example scripts are included to give you a head start. 
 
 

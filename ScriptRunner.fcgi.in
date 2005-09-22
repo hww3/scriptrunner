@@ -11,6 +11,8 @@ mapping compiled_scripts = ([]);
 int main(int argc, array(string) argv)
 {
   int sock;
+ 
+  add_constant("RequestID", .RequestID);
 
   if(logfile_path)
     logfile=Stdio.File(logfile_path, "rwac");
@@ -40,8 +42,15 @@ void request_loop(int sock, int id)
                 if(request_id->misc->path_info && 
                        sizeof(request_id->misc->path_info))
                 {
-                   object s;
+                   object|string s;
                   s = get_script(request_id->misc->path_translated, request_id);
+                  if(stringp(s))
+                  {
+                    request->write("Content-type: text/html\r\n\r\n");
+                    request->write("<h1>Compile Error</h1><pre>" + s + "</pre>");
+                    request->finish(); 
+                    return;
+                  }
 		     log("running script\n");
                      mixed retval;
                      retval = s->parse(request_id);
@@ -102,11 +111,8 @@ void request_loop(int sock, int id)
                      else
                        log("got an error: %O\n", e);
                      request->write("Content-type: text/html\r\n\r\n");
-                     request->write("an error occurred while compiling the script:\n");
-                     if(objectp(e))
-                       request->write("<pre>\n%s\n</pre>", e->describe()); 
-                     else  
-                       request->write("<pre>\n%O\n</pre>", e); 
+                     request->write("<h1>\n%s\n</h1>", describe_error(e)); 
+                     request->write("<pre>\n%s\n</pre>", describe_backtrace(e)); 
                    request->finish();
                   }
 
@@ -117,7 +123,7 @@ void request_loop(int sock, int id)
 	} while(!shutdown);
 }
 
-object get_script(string path, object id)
+string|object get_script(string path, object id)
 {
   string code;
   program p;
@@ -139,8 +145,17 @@ object get_script(string path, object id)
   if(!code)
     error("Script is an empty file.\n");
 
-  p = compile_string(code);
+  object er = ErrorContainer();
+
+  master()->set_inhibit_compile_errors(er);
+  catch(p = compile_string(code));
+  master()->set_inhibit_compile_errors(0);
   
+  if(!p) // an error must have occurred...
+  {
+    log("%s", er->get());
+    return er->get();
+  }
   mapping ent = (["object": p(), "modified": stat->mtime]);
 
   compiled_scripts[path] = ent;
@@ -156,3 +171,86 @@ void log(string t, mixed ... args)
     t = sprintf(t, @args);
   logfile->write(sprintf("[%s] %s", (ctime(time())- "\n"), t));
 }
+
+
+
+
+//!
+class LowErrorContainer
+{
+  string d;
+  string errors="", warnings="";
+  string get()
+  {
+    return errors;
+  }
+
+  //!
+  string get_warnings()
+  {
+    return warnings;
+  }
+
+  //!
+  void print_warnings(string prefix) {
+    if(warnings && strlen(warnings))
+      log(prefix+"\n"+warnings);
+  }
+
+  //!
+  void got_error(string file, int line, string err, int|void is_warning)
+  {
+    if (file[..sizeof(d)-1] == d) {
+      file = file[sizeof(d)..];
+    }
+    if( is_warning)
+      warnings+= sprintf("%s:%s\t%s\n", file, line ? (string) line : "-", err);
+    else
+      errors += sprintf("%s:%s\t%s\n", file, line ? (string) line : "-", err);
+  }
+
+  //!
+  void compile_error(string file, int line, string err)
+  {
+    got_error(file, line, "Error: " + err);
+  }
+ 
+  //!
+  void compile_warning(string file, int line, string err)
+  {  
+    got_error(file, line, "Warning: " + err, 1);
+  }
+      
+  //!
+  void create()
+  {  
+    d = getcwd();
+    if (sizeof(d) && (d[-1] != '/') && (d[-1] != '\\'))
+      d += "/";
+  }
+}
+    
+//! @appears ErrorContainer
+class ErrorContainer
+{
+  inherit LowErrorContainer;
+
+  //!
+  void compile_error(string file, int line, string err)
+  {
+//    if( sizeof(compile_error_handlers) )   
+//      compile_error_handlers->compile_error( file,line, err );
+//    else
+      ::compile_error(file,line,err);
+  }
+    
+  //!
+  void compile_warning(string file, int line, string err)
+  {   
+//    if( sizeof(compile_error_handlers) )
+//      compile_error_handlers->compile_warning( file,line, err );
+//    else
+      ::compile_warning(file,line,err);
+  }
+}
+

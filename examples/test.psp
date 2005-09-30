@@ -1,0 +1,32 @@
+<<%  %>
+arg<p>
+arg2
+<p>
+arg3
+<p>
+
+<%= request->variables->foo %>
+o123o<p>
+<%!
+    string gimme()
+    {
+         return (string)random(100);
+    }
+%>
+
+<p>
+<% out->add("SNAGGLEPUSS!");
+%>
+this is a test of some <% out->add("pike"); %> code.
+blah
+<% if(request->variables->blah123)
+%>
+  we're in the money!
+<%
+   else
+%>
+
+it's super cool to be able to do this <%= "foo" %>
+
+<%= gimme() %>
+

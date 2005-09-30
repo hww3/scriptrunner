@@ -149,7 +149,7 @@ string|object get_script(string path, object id)
   if(path[sizeof(path)-4..] == ".psp")
   {
      log("  compiling as a psp\n");
-     Web.PikeServerPages.PSPCompiler compiler; = Web.PikeServerPages.PSPCompiler();
+     Web.PikeServerPages.PSPCompiler compiler = Web.PikeServerPages.PSPCompiler();
      code = compiler->parse_psp(code);
   }
 

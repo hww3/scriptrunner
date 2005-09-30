@@ -1,3 +1,17 @@
+Changes since version 0.2
+
+- Added <%@ handling
+
+- added "include" directive, with absolute paths chrooted to document root.
+
+- added filename to generated code, should provide better error messages as 
+  a result.
+
+- fixed line numbering, so it should be more accurate.
+
+- fixed bug that caused the first TextBlock in a parse session to be 
+  silently dropped.
+
 Changes since version 0.1
 
 - Added some optimizations which should save memory when large numbers of 

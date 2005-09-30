@@ -335,8 +335,10 @@ class PikeBlock
    {
      realfile = Stdio.append_path(document_root, (file/"/" - ({""})) * "/");
    }
-   else realfile = file; 
-
+   else 
+   {
+     realfile = file; 
+   }
    contents = Stdio.read_file(realfile);
  
  werror("contents: %O\n", contents);

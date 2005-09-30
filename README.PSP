@@ -1,0 +1,38 @@
+As of version 0.2, Pike ScriptRunner can be used to run Pike Server Pages (PSP) files. PSP 
+is similar to JSP in that it allows you to mix code and content on the same page. The PSP 
+markup format is:
+
+<%= someexpression %>  <-- gives you some expression cast as a string.
+
+<%  somepikecode %>  <-- inserts some pike code fragments in page
+
+the object "out" is available and is a String.Buffer. All of your output should be `+=() 
+or add()ed to this object.
+
+return doesn't play a role here; don't use it!
+
+blocks of non-psp markup are considered a block, so you can do this:
+
+<% if(id->variables->somevar) %>
+all this
+appears if somevar is present and non-zero.
+<% else %>
+all of this appears otherwise, until we hit another <% %> (ie this shows up
+regardless) block.
+
+note that you can use {} in these cases to force the situation, as all text blocks get 
+converted automatically to output().
+
+<%!
+     some pike code
+%>
+
+this code will be placed inside the servicing object, but outside of the
+page servicing method, so you can use this "directive" tag to define
+additional methods, perform inherits and includes, and so forth.
+
+<%@ include file="" %>
+
+this will include some other file into the current file, and will be parsed as a psp 
+fragment. currently, the path is not relative to the document root. more work needs to be 
+done on this.

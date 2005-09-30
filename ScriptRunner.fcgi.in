@@ -1,6 +1,8 @@
-#!/usr/local/bin/pike
+#!/usr/local/bin/pike -M.
 
 constant my_version = "0.1";
+
+Web.PikeServerPages.PSPCompiler compiler = Web.PikeServerPages.PSPCompiler();
 
 string logfile_path = "/tmp/scriptrunner.log";
 Stdio.File logfile;
@@ -134,9 +136,9 @@ string|object get_script(string path, object id)
   if(!stat)
     error("Script does not exist.\n");
 
-  if((compiled_scripts[path] && compiled_scripts[path]->modified == stat->mtime)
+  if((compiled_scripts[path] && compiled_scripts[path][0] == stat->mtime)
          && !id->pragma["no-cache"])
-    return compiled_scripts[path]->object;
+    return compiled_scripts[path][1];
 
   log("compiling file %s\n", path);
 
@@ -144,6 +146,12 @@ string|object get_script(string path, object id)
 
   if(!code)
     error("Script is an empty file.\n");
+
+  if(path[sizeof(path)-4..] == ".psp")
+  {
+     log("  compiling as a psp\n");
+     code = compiler->parse_psp(code);
+  }
 
   object er = ErrorContainer();
 
@@ -156,11 +164,12 @@ string|object get_script(string path, object id)
     log("%s", er->get());
     return er->get();
   }
-  mapping ent = (["object": p(), "modified": stat->mtime]);
+
+  array ent = ({ stat->mtime, p() });
 
   compiled_scripts[path] = ent;
 
-  return ent->object;
+  return ent[1];
 }
 
 void log(string t, mixed ... args)

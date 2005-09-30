@@ -1,6 +1,7 @@
 constant TYPE_SCRIPTLET = 1;
 constant TYPE_DECLARATION = 2;
 constant TYPE_INLINE = 3;
+constant TYPE_DIRECTIVE = 4;
 
 program compile_string(string code, string realfile)
 {
@@ -9,7 +10,7 @@ program compile_string(string code, string realfile)
   return compile_string(psp, realfile);
 }
 
-string parse_psp(string file, string realfile)
+array(Block) psp_to_blocks(string file, string realfile)
 {
   int file_len = strlen(file);
   int in_tag = 0;
@@ -78,26 +79,55 @@ string parse_psp(string file, string realfile)
   }
   while (sp < file_len);
 
+  return contents;
+}
+
+string parse_psp(string file, string realname)
+{
   // now, let's render some pike!
   string pikescript = "";
   string header = "";
 
   pikescript+="string|mapping parse(RequestID request){\n";
   pikescript+="String.Buffer out = String.Buffer();\n";
+#ifdef ROXEN
   pikescript+="object conf = request->conf;\n";
+#endif
 
-  foreach(contents, object e)
-  {
-    if(e->get_type() == TYPE_DECLARATION)
-      header += e->render();
-    else
-      pikescript += e->render();
-  }
+  array(Block) contents = psp_to_blocks(file, realname);
+
+  string ps, h;
+ 
+  [ps, h] = render_psp(contents, "", "");
+
+  pikescript += ps;
+
+  header += h;
 
   pikescript += "return out->get();\n }\n";  
 
   return header + "\n\n" + pikescript;
 }
+
+array render_psp(array(Block) contents, string pikescript, string header)
+{
+  foreach(contents, object e)
+  {
+    if(e->get_type() == TYPE_DECLARATION)
+      header += e->render();
+    else if(e->get_type() == TYPE_DIRECTIVE)
+    {
+      mixed ren = e->render();
+      if(arrayp(ren))
+        [pikescript, header] = render_psp(ren, pikescript, header);
+    }
+    else
+      pikescript += e->render();
+  }
+
+  return ({pikescript, header});
+}
+
 
 int main(int argc, array(string) argv)
 {

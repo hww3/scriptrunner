@@ -185,7 +185,7 @@ class Block(string contents, string filename)
     return "Block(" + contents + ")";
   }
 
-  string render();
+  array(Block) | string render();
 }
 
 class TextBlock
@@ -246,15 +246,22 @@ class PikeBlock
   {
     if(has_prefix(contents, "<%=")) return TYPE_INLINE;
     if(has_prefix(contents, "<%!")) return TYPE_DECLARATION;
+    if(has_prefix(contents, "<%@")) return TYPE_DIRECTIVE;
     else return TYPE_SCRIPTLET;
   }
 
-  string render()
+  array(Block) | string render()
   {
     if(has_prefix(contents, "<%!"))
     {
       string expr = contents[3..strlen(contents)-3];
       return("// "+ start + " - " + end + "\n#line " + start + " \"" + filename + "\"\n" + expr);
+    }
+
+    else if(has_prefix(contents, "<%@"))
+    {
+      string expr = contents[3..strlen(contents)-3];
+      return parse_directive(expr);
     }
 
     else if(has_prefix(contents, "<%="))
@@ -268,6 +275,60 @@ class PikeBlock
       string expr = String.trim_all_whites(contents[2..strlen(contents)-3]);
       return "// "+ start + " - " + end + "\n#line " + start + " \"" + filename + "\"\n" + expr + "\n";
     }
+  }
+
+ string|array(Block) parse_directive(string exp)
+ {
+   exp = String.trim_all_whites(exp);
+ 
+   if(search(exp, "\n")!=-1)
+     throw(Error.Generic("PSP format error: invalid directive format.\n"));
+ 
+   // format of a directive is: keyword option="value" ...
+ 
+   string keyword;
+ 
+   int r = sscanf(exp, "%[A-Za-z0-9] %s", keyword, exp);
+ 
+   if(r!=2) 
+     throw(Error.Generic("PSP format error: invalid directive format.\n"));
+ 
+ werror("keyword %O\n", keyword);
+ 
+   switch(keyword)
+   {
+     case "include":
+       return process_include(exp);
+       break;
+ 
+     default:
+       throw(Error.Generic("PSP format error: unknown directive " + keyword + ".\n"));
+ 
+   }
+ }
+
+ // we don't handle absolute includes yet.
+ array(Block) process_include(string exp)
+ {
+   string file;
+   string contents;
+ 
+   int r = sscanf(exp, "%*sfile=\"%s\"%*s", file);
+ 
+   if(r != 3) 
+     throw(Error.Generic("PSP format error: unknown include format.\n"));
+ 
+   contents = Stdio.read_file(file);
+ 
+ werror("contents: %O\n", contents);
+ 
+   if(contents)
+   {
+     array x = psp_to_blocks(contents, file);
+     werror("blocks: %O\n", x);
+     return x;
+   }
+
   }
 }
 

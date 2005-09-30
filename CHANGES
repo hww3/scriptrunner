@@ -1,0 +1,11 @@
+Changes since version 0.1
+
+- Added some optimizations which should save memory when large numbers of 
+  scripts are loaded.
+
+- Added the HTTP module which includes convenience functions: redirect(), 
+  auth_required() and string_answer().
+
+- Added preliminary Pike Server Pages support. Files with a .psp extension 
+  will be parsed according to the PSP markup specification (which is 
+  currently evolving.) See README.PSP for more information.

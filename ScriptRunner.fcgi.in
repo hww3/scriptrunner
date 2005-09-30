@@ -150,6 +150,7 @@ string|object get_script(string path, object id)
   {
      log("  compiling as a psp\n");
      Web.PikeServerPages.PSPCompiler compiler = Web.PikeServerPages.PSPCompiler();
+     compiler->document_root = id->misc->document_root || "/tmp";
      code = compiler->parse_psp(code, path);
   }
 

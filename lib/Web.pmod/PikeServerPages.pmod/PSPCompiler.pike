@@ -3,7 +3,9 @@ constant TYPE_DECLARATION = 2;
 constant TYPE_INLINE = 3;
 constant TYPE_DIRECTIVE = 4;
 
-int includes = 0;
+string document_root = "";
+
+private int includes = 0;
 
 // should this be configurable?
 int max_includes = 100;
@@ -326,8 +328,16 @@ class PikeBlock
  
    if(r != 3) 
      throw(Error.Generic("PSP format error: unknown include format.\n"));
- 
-   contents = Stdio.read_file(file);
+
+   string realfile;
+
+   if(file[0] = '/')
+   {
+     realfile = Stdio.append_path(document_root, (file/"/" - ({""})) * "/");
+   }
+   else realfile = file; 
+
+   contents = Stdio.read_file(realfile);
  
  werror("contents: %O\n", contents);
  

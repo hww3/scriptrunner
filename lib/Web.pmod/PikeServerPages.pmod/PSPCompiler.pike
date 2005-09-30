@@ -3,6 +3,11 @@ constant TYPE_DECLARATION = 2;
 constant TYPE_INLINE = 3;
 constant TYPE_DIRECTIVE = 4;
 
+int includes = 0;
+
+// should this be configurable?
+int max_includes = 100;
+
 program compile_string(string code, string realfile)
 {
   string psp = parse_psp(code, realfile);
@@ -312,7 +317,11 @@ class PikeBlock
  {
    string file;
    string contents;
- 
+
+   if(includes > max_includes) throw(Error.Generic("PSP Error: too many includes, possible recursion!\n")); 
+
+   includes++;
+
    int r = sscanf(exp, "%*sfile=\"%s\"%*s", file);
  
    if(r != 3) 

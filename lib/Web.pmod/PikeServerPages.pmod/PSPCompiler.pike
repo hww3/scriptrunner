@@ -4,18 +4,18 @@ constant TYPE_INLINE = 3;
 
 program compile_string(string code, string realfile)
 {
-  string psp = parse_psp(code);
+  string psp = parse_psp(code, realfile);
 
   return compile_string(psp, realfile);
 }
 
-string parse_psp(string file)
+string parse_psp(string file, string realfile)
 {
   int file_len = strlen(file);
   int in_tag = 0;
   int sp = 0;
-  int old_sp = -1;
-  int start_line = 0;
+  int old_sp = 0;
+  int start_line = 1;
   array contents = ({});
 
   do 
@@ -25,17 +25,31 @@ string parse_psp(string file)
 #endif
     sp = search(file, "<%", sp);
 
-    if(sp == -1) {sp = file_len; }// no starting point, skip to the end.
+    if(sp == -1) 
+    {
+      sp = file_len; 
+      if(old_sp!=sp) 
+      {
+        string s = file[old_sp..sp-1];
+        int l = sizeof(s) - sizeof(s-"\n");
+        Block b = TextBlock(s, realfile);
+        b->start = start_line;
+        b->end = (start_line+=l);
+        contents += ({b});
+      }
+    }// no starting point, skip to the end.
+
     else if(sp >= 0) // have a starting code.
     {
       int end;
       if(in_tag) { error("invalid format: nested tags!\n"); }
-      if(old_sp>=0) {
+      if(old_sp>=0) 
+      {
         string s = file[old_sp..sp-1];
-        int l = sizeof(s/"\n");
-        Block b = TextBlock(s);
+        int l = sizeof(s) - sizeof(s-"\n");
+        Block b = TextBlock(s, realfile);
         b->start = start_line;
-        b->end = (start_line ++);
+        b->end = (start_line+=l);
         contents += ({b});
       }
       if((sp == 0) || (sp > 0 && file[sp-1] != '<'))
@@ -51,10 +65,10 @@ string parse_psp(string file)
       {
         in_tag = 0;
         string s = file[sp..end];
-        int l = sizeof(s/"\n");
-        Block b = PikeBlock(s);
+        Block b = PikeBlock(s, realfile);
+        int l = sizeof(s) - sizeof(s-"\n");
         b->start = start_line;
-        b->end = (start_line ++);
+        b->end = (start_line+=l);
         contents += ({b});
         
         sp = end + 1;
@@ -91,7 +105,7 @@ int main(int argc, array(string) argv)
   string file = Stdio.read_file(argv[1]);
   if(!file) { werror("input file %s does not exist.\n", argv[1]); return 1;}
 
-  string pikescript = parse_psp(file);
+  string pikescript = parse_psp(file, argv[1]);
 
   write(pikescript);
 
@@ -126,7 +140,7 @@ werror("returning: %O\n", ret);
   return ret;
 }
 
-class Block(string contents)
+class Block(string contents, string filename)
 {
   int start;
   int end;
@@ -148,9 +162,9 @@ class TextBlock
 {
  inherit Block;
 
- array in = ({"\\", "\""});
+ array in = ({"\\", "\"", "\n"});
 
- array out = ({"\\\\", "\\\""});
+ array out = ({"\\\\", "\\\"", "\\n"});
 
  string render()
  {
@@ -162,14 +176,31 @@ class TextBlock
  {
     string retval = "";
     int cl = start;
-    foreach(c/"\n", string line)
+    int atend=0;
+    int current=0;
+    do
     {
-       
+       string line;
+       int end = search(c, "\n", current);
+       if(end != -1)
+       {
+         line = c[current..end];
+         if(end == (strlen(c) -1))
+           atend = 1;
+         else current = end + 1;
+       }
+       if(end == -1)
+       {
+         line = c[current..end];
+         atend = 1;
+       }
        line = replace(line, in, out);
-       retval+=("#line " + cl + "\n out->add(\"" + line + "\\n\");\n");
-       cl++;
-      
-    }
+       if(strlen(line))
+       {
+         retval+=("#line " + cl + " \"" + filename + "\"\n out->add(\"" + line + "\");\n");
+         cl++;
+       } 
+    } while(!atend);
 
     return retval;
 
@@ -193,19 +224,20 @@ class PikeBlock
     if(has_prefix(contents, "<%!"))
     {
       string expr = contents[3..strlen(contents)-3];
-      return("#line " + start + "\n" + expr);
+      return("// "+ start + " - " + end + "\n#line " + start + " \"" + filename + "\"\n" + expr);
     }
 
     else if(has_prefix(contents, "<%="))
     {
       string expr = String.trim_all_whites(contents[3..strlen(contents)-3]);
-      return("#line " + start + "\nout->add((string)(" + expr + "));");
+      return("// "+ start + " - " + end + "\n#line " + start + " \"" + filename + "\"\nout->add((string)(" + expr + "));");
     }
 
     else
     {
       string expr = String.trim_all_whites(contents[2..strlen(contents)-3]);
-      return "#line " + start + "\n" + expr + "\n";
+      return "// "+ start + " - " + end + "\n#line " + start + " \"" + filename + "\"\n" + expr + "\n";
     }
   }
 }
+

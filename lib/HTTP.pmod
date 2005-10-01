@@ -13,7 +13,7 @@ mapping auth_required(string realm, string message)
 
 mapping string_answer(string result, string mimetype)
 {
-  return (["data": result,  "_headers": (["Content-type": mimetype])]);
+  return (["data": result,  "_headers": (["content-type": mimetype])]);
 
 }
 

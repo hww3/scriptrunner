@@ -67,8 +67,10 @@ void request_loop(int sock, int id)
                           if(!retval->type)
                             retval->type = "text/html";
 
-                          request->write("Status: %d\r\n", retval->error);
+                          if(retval->_headers["content-type"]);
+                          else
                           request->write("Content-type: %s\r\n", retval->type);
+                            request->write("Status: %d\r\n", retval->error);
 
                           foreach(retval->_headers; string hname; string hvalue)
                             request->write("%s: %s\r\n", String.capitalize(hname), hvalue);

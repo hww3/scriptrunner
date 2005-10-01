@@ -94,7 +94,7 @@ string parse_psp(string file, string realname)
   // now, let's render some pike!
   string pikescript = "";
   string header = "";
-
+  pikescript+="private string __content_type = \"text/html\";\n";
   pikescript+="string|mapping parse(RequestID request){\n";
   pikescript+="String.Buffer out = String.Buffer();\n";
 #ifdef ROXEN
@@ -110,8 +110,8 @@ string parse_psp(string file, string realname)
   pikescript += ps;
 
   header += h;
-
-  pikescript += "return out->get();\n }\n";  
+ 
+  pikescript += "return HTTP.string_answer(out->get(), __content_type);\n }\n";  
 
   return header + "\n\n" + pikescript;
 }
@@ -295,7 +295,7 @@ class PikeBlock
  
    string keyword;
  
-   int r = sscanf(exp, "%[A-Za-z0-9] %s", keyword, exp);
+   int r = sscanf(exp, "%[A-Za-z0-9\-] %s", keyword, exp);
  
    if(r!=2) 
      throw(Error.Generic("PSP format error: invalid directive format.\n"));
@@ -306,6 +306,10 @@ class PikeBlock
    {
      case "include":
        return process_include(exp);
+       break;
+
+     case "content-type":
+       return process_contenttype(exp);
        break;
  
      default:
@@ -351,5 +355,22 @@ class PikeBlock
    }
 
   }
+
+ array(Block) process_contenttype(string exp)
+ {
+   string t;
+
+   int r = sscanf(exp, "%*stype=\"%s\"%*s", t);
+ 
+   if(r != 3) 
+     throw(Error.Generic("PSP format error: unknown content-type format.\n"));
+
+   Block b = PikeBlock("<% __content_type = \"" + t + "\"; %>", "");
+
+   return ({ b });
+
+  }
 }
+
+
 

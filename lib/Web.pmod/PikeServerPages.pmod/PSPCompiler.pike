@@ -102,7 +102,12 @@ string parse_psp(string file, string realname)
 #endif
 
   array(Block) contents = psp_to_blocks(file, realname);
-
+/*
+foreach(contents, Block b)
+{
+   werror("%O\n" , b);
+}
+*/
   string ps, h;
  
   [ps, h] = render_psp(contents, "", "");
@@ -228,7 +233,7 @@ class TextBlock
        }
        if(end == -1)
        {
-         line = c[current..end];
+         line = c[current..];
          atend = 1;
        }
        line = replace(line, in, out);
@@ -300,8 +305,6 @@ class PikeBlock
    if(r!=2) 
      throw(Error.Generic("PSP format error: invalid directive format.\n"));
  
- werror("keyword %O\n", keyword);
- 
    switch(keyword)
    {
      case "include":
@@ -345,12 +348,12 @@ class PikeBlock
    }
    contents = Stdio.read_file(realfile);
  
- werror("contents: %O\n", contents);
+ //werror("contents: %O\n", contents);
  
    if(contents)
    {
      array x = psp_to_blocks(contents, file);
-     werror("blocks: %O\n", x);
+     //werror("blocks: %O\n", x);
      return x;
    }
 

@@ -1,5 +1,10 @@
 Changes since version 0.2
 
+- Added appropriate locking to keep multithreaded applications happy.
+
+- Simplified returning of data within the app itself, added method 
+  response_write_and_finish() to allow direct access to writing responses.
+
 - Added <%@ handling
 
 - added "include" directive, with absolute paths chrooted to document root.

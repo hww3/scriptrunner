@@ -10,7 +10,7 @@ mapping (string:mixed) misc = ([ ]);
 string query, rest_query;
 static string data;
 
-object fast_cgi_request;
+static object fast_cgi_request;
 
 multiset   (string) prestate     = (< >);
 multiset   (string) config       = (< >);
@@ -26,6 +26,22 @@ mapping (string:string) cookies = ([ ]);
 
 string prot;
 string method;
+
+void response_write_and_finish(mixed ... args)
+{
+
+        Thread.Mutex lock;
+        Thread.MutexKey key;
+
+        lock = Thread.Mutex();
+        key = lock->lock();
+
+        fast_cgi_request->write(@args);
+        fast_cgi_request->finish();
+
+        key = 0;
+
+}
 
 static private void decode_query() {
   string v, a, b;	

@@ -26,14 +26,16 @@ int main(int argc, array(string) argv)
   write("Running in threaded mode.\n");
 #endif
 
- 
-  add_constant("RequestID", ScriptRunner.RequestID);
-  add_constant("Session", ScriptRunner.Session);
-  // ok, our first attempt at session management.
   session_manager = ScriptRunner.SessionManager();
   ScriptRunner.SessionStorage s = ScriptRunner.FileSessionStorage();
   s->set_storagedir(session_storagedir);
   session_manager->session_storage = ({s});
+
+ 
+  add_constant("RequestID", ScriptRunner.RequestID);
+  add_constant("Session", ScriptRunner.Session);
+  add_constant("session_manager", session_manager);
+  // ok, our first attempt at session management.
 
   if(logfile_path)
     logfile=Stdio.File(logfile_path, "rwac");

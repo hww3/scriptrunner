@@ -1,5 +1,19 @@
 Changes since version 0.2
 
+- Added HTTP.set_cookie()
+
+- Initial session support is here, only supports standard encodable
+  Pike datatypes, enable with: __participates_in_session in script 
+  object. Note that we don't currently set the session cookie if 
+  it doesn't already exist (to be fixed asap).
+
+- Added Session Manager objects
+
+- Added simple file based session engine, no session expiration yet!
+
+- Added baseclass, ScriptRunner.SRPikeScript to contain all standard
+  methods and fields.
+
 - Added appropriate locking to keep multithreaded applications happy.
 
 - Simplified returning of data within the app itself, added method 

@@ -3,7 +3,7 @@ inherit SessionStorage;
 
 static string storage_dir;
 
-void creeate()
+void create()
 {
 }
 
@@ -43,6 +43,24 @@ mixed get(string sessionid)
   data->set_attr("FileSessionPath", sessionfile);
 
   return data;
+}
+
+int expunge(string sessionid)
+{
+ string sessionfile;
+ string p;
+
+ [p, sessionfile] = sessionfile_from_session(sessionid);
+
+ if(file_stat(sessionfile))
+ {
+   return Stdio.recursive_rm(sessionfile);
+ }
+ else
+ {
+   return 0;
+ }
+
 }
 
 void set(string sessionid, Session data, int timeout)

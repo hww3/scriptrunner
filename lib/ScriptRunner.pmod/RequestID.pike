@@ -36,9 +36,18 @@ void response_write_and_finish(mixed ... args)
         lock = Thread.Mutex();
         key = lock->lock();
 
+        mixed e;
+
+   e = catch{
+
         fast_cgi_request->write(@args);
         fast_cgi_request->finish();
+};
 
+if(e){
+  werror(@args);
+throw(e);
+}
         key = 0;
 
 }

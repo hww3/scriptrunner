@@ -1,27 +1,41 @@
-static storage_dir;
+import ScriptRunner;
+
+array session_storage = ({});
 
 void create()
 {
 
 }
 
-void set_storagedir(string directory)
+int expunge_session(string sessionid)
 {
-  Stdio.Stat s;
+  int rv;
 
-  s = file_stat(directory);
+  foreach(session_storage;; SessionStorage engine)
+  {
+    rv|=engine->expunge(sessionid);
+  }
 
-  if(!s || !(s->isdir))
-    throw(Error.Generic("Session Directory " + directory + " is non-existent or is not a directory.\n"));
-  storage_dir = directory;
+  return rv; 
+
 }
 
-mixed get_session(string sessionid)
+Session get_session(string sessionid)
 {
-  return 0;
+  foreach(session_storage;; SessionStorage engine)
+  {
+    Session s = engine->get(sessionid);
+
+    if(s) return s;
+  }
+
+  return Session(sessionid);
 }
 
-void set_session(string sessionid, mixed session_data, int timeout)
+void set_session(string sessionid, Session session_data, int timeout)
 {
-
+  foreach(session_storage;; SessionStorage engine)
+  {
+    engine->set(sessionid, session_data, timeout);
+  }
 }

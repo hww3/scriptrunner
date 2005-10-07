@@ -115,8 +115,16 @@ void request_loop(int sock, int id)
                       werror("SESSION: %O\n", sess);
                     }
                     else {
-                    request_id->response_write_and_finish("Content-type: text/plain\r\n\r\nwe need a session!");
-                    return;
+mapping r = HTTP.set_cookie(session_cookie_name, session_manager->new_sessionid(), time() + session_timeout);
+r->status = 302;
+r->_headers["location"] = request_id->misc->script_name + 
+(id->misc->path_info?("/" + id->misc->path_info):"") + 
+(id->query?("?"+id->query):"");
+
+request_id->response_write_and_finish(
+retval_to_response(
+r));
+return;
                     }
                   }
 
@@ -131,43 +139,7 @@ void request_loop(int sock, int id)
                                                         session_timeout);
                      }
 
-                     if(!stringp(retval))
-                     {
-                        if(mappingp(retval))
-                        {
-
-                          if(!retval->_headers)
-                            retval->_headers = ([]);
-                          if(!retval->error)
-                            retval->error = 200;
-                          if(!retval->type)
-                            retval->type = "text/html";
-
-                          response+=sprintf("Status: %d\r\n", retval->error);
-
-                          if(retval->_headers["content-type"]) ; // DO NOTHING!
-                          else 
-                            response+=sprintf("Content-type: %s\r\n", retval->type);
-
-                          foreach(retval->_headers; string hname; string hvalue)
-                            response+=sprintf("%s: %s\r\n", String.capitalize(hname), hvalue);
-
-                          response+="\r\n";
-
-                          // TODO: don't think we can get it all in one call.
-                          if(objectp(retval->data))
-                            response+=retval->data->read();
-                          else if(retval->data)
-                            response+=retval->data;
-
-                        } 
-                        else error("Invalid return value from parse().\n");
-                     }
-                     else
-                     {
-                        response+="Content-type: text/html\r\n\r\n";
-                        response+=retval;
-                     }
+                     response += retval_to_response(retval);       
                 }
                 // no, then just print info.
                 else
@@ -343,3 +315,47 @@ class ErrorContainer
   }
 }
 
+string retval_to_response(mixed retval)
+{
+   string response="";
+
+              if(!stringp(retval))
+                     {
+                        if(mappingp(retval))
+                        {
+
+                          if(!retval->_headers)
+                            retval->_headers = ([]);
+                          if(!retval->error)
+                            retval->error = 200;
+                          if(!retval->type)
+                            retval->type = "text/html";
+
+                          response+=sprintf("Status: %d\r\n", retval->error);
+
+                          if(retval->_headers["content-type"]) ; // DO NOTHING!
+                          else 
+                            response+=sprintf("Content-type: %s\r\n", retval->type);
+
+                          foreach(retval->_headers; string hname; string hvalue)
+                            response+=sprintf("%s: %s\r\n", String.capitalize(hname), hvalue);
+
+                          response+="\r\n";
+
+                          // TODO: don't think we can get it all in one call.
+                          if(objectp(retval->data))
+                            response+=retval->data->read();
+                          else if(retval->data)
+                            response+=retval->data;
+
+                        } 
+                        else error("Invalid return value from parse().\n");
+                     }
+                     else
+                     {
+                        response+="Content-type: text/html\r\n\r\n";
+                        response+=retval;
+                     }
+
+  return response;
+}

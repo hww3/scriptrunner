@@ -25,12 +25,12 @@ mapping set_cookie(string name, string value, int expiration_timestamp, mapping|
 {
 
   if(!control)
-    control = (["data": "", "_headers" (["content-type": ]) ]);
+    control = (["data": "", "_headers" : ([]) ]);
 
 
   control->_headers["set-cookie"] = Protocols.HTTP.http_encode_cookie(name)+
 		      "="+Protocols.HTTP.http_encode_cookie( value )+
-		      "; expires="+Protocols.HTTP.http_date(timestamp)+"; path=/");
+		      "; expires="+Protocols.HTTP.Server.http_date(expiration_timestamp)+"; path=/";
 
   return control;
 }

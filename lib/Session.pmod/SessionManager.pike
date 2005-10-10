@@ -11,6 +11,9 @@ void create()
 }
 
 void session_cleaner()
+{
+
+}
 
 void start_session_cleaner()
 {

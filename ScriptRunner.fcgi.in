@@ -111,35 +111,42 @@ void request_loop(int sock, int id)
                     if(request_id->cookies && request_id->cookies[session_cookie_name])
                     {
                       ScriptRunner.Session sess = session_manager->get_session(request_id->cookies[session_cookie_name]);
-                      request_id->misc->session = sess;
-                      werror("SESSION: %O\n", sess);
+                      request_id->misc->_session = sess;
+                      request_id->misc->session_variables = sess->data;
                     }
-                    else {
-mapping r = HTTP.set_cookie(session_cookie_name, session_manager->new_sessionid(), time() + session_timeout);
-r->status = 302;
-r->_headers["location"] = request_id->misc->script_name + 
-(id->misc->path_info?("/" + id->misc->path_info):"") + 
-(id->query?("?"+id->query):"");
+                    // if we don't have the session identifier set, we should set one.
+                    else 
+                    {
+                      mapping r = HTTP.set_cookie(session_cookie_name, 
+                                                  session_manager->new_sessionid(), time() + session_timeout, request_id);
 
-request_id->response_write_and_finish(
-retval_to_response(
-r));
-return;
+                      r->status = 302;
+                      r->_headers["location"] = request_id->misc->script_name + 
+                                                  (id->misc->path_info?("/" + id->misc->path_info):"") + 
+                                                  (id->query?("?"+id->query):"");
+
+                      request_id->response_write_and_finish( retval_to_response(r));
+                      return;
                     }
                   }
 
-                     mixed retval;
-                     retval = s->parse(request_id);
+                  // the moment of truth!
+                  mixed retval;
+                  retval = s->parse(request_id);
 
-                     // should we be doing this unconditionally?
-                     if(s["__participates_in_session"] && s["__participates_in_session"] != 0)
-                     {
-                       if(request_id->misc->session)
-                         session_manager->set_session(request_id->misc->session->id, request_id->misc->session, 
-                                                        session_timeout);
-                     }
+                  // should we be doing this unconditionally?
+                  if(s["__participates_in_session"] && s["__participates_in_session"] != 0)
+                  {
+                    if(request_id->misc->_session)
+                    {
+                      // we need to set this explicitly, in case the link was broken.
+                      request_id->misc->_session->data = request_id->misc->session_variables;
+                      session_manager->set_session(request_id->misc->session->id, request_id->misc->session, 
+                                                   session_timeout);
+                    }
+                  }
 
-                     response += retval_to_response(retval);       
+                  response += retval_to_response(retval);       
                 }
                 // no, then just print info.
                 else

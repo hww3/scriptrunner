@@ -94,6 +94,7 @@ string parse_psp(string file, string realname)
   // now, let's render some pike!
   string pikescript = "";
   string header = "";
+  pikescript+="inherit SRPikeScript;\n";
   pikescript+="private string __content_type = \"text/html\";\n";
   pikescript+="string|mapping parse(RequestID request){\n";
   pikescript+="String.Buffer out = String.Buffer();\n";
@@ -307,6 +308,10 @@ class PikeBlock
  
    switch(keyword)
    {
+     case "uses-session":
+       return process_session(exp);
+       break;
+
      case "include":
        return process_include(exp);
        break;
@@ -374,6 +379,16 @@ class PikeBlock
 
   }
 }
+
+ array(Block) process_session(string exp)
+ {
+   string t;
+
+   Block b = PikeBlock("<%! __participates_in_session = 1; %>", "");
+
+   return ({ b });
+
+  }
 
 
 

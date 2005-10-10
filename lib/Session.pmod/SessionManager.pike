@@ -1,37 +1,47 @@
 import ScriptRunner;
 
 // our default timeout is 1 hour.
-int default_timeout = 3600;
+static int default_timeout = 3600;
+static int cleaner_interval = 3600;
 
 array session_storage = ({});
 
 void create()
 {
-  call_out(start_session_cleaner, 5);
+  start_session_cleaner();
 }
 
 void session_cleaner()
 {
 
+  do
+  {
+    werror("starting cleaner run.\n");
+    foreach(session_storage;; SessionStorage engine)
+    {
+      engine->clean_sessions(default_timeout);
+    } 
+
+    sleep(cleaner_interval);
+  } 
+  while(1);
 }
 
 void start_session_cleaner()
 {
   // let's do this as a thread; it's easier that way.
-
-  do
-  {
-
+    sleep(5);
     Thread.Thread cleaner = Thread.Thread(session_cleaner);
-    werror("Session Cleaner ended, will restart in 10 seconds...\n");
-    sleep(10);
-  } 
-  while(1);
 }
 
 void set_default_timeout(int seconds)
 {
   default_timeout = seconds;
+}
+
+void set_cleaner_interval(int seconds)
+{
+  cleaner_interval = seconds;
 }
 
 string new_sessionid()

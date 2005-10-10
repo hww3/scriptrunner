@@ -7,6 +7,27 @@ void create()
 {
 }
 
+void clean_sessions(int default_timeout)
+{
+  Filesystem.Traversion f = Filesystem.Traversion(storage_dir);
+
+  foreach(f; string dir; string file)
+  {
+    Stdio.Stat s = f->stat();
+    if(s && s->isreg && ((s->mtime+default_timeout) < time()))
+    {
+      werror("deleting stale session " + dir+file + "\n");
+      rm(dir + file);
+    }
+    else if(!s && sizeof(get_dir(dir+file)) == 0)
+    {
+      werror("deleting empty directory " + dir+file + "\n");
+      Stdio.recursive_rm(dir+file);
+    }
+  }
+
+}
+
 void set_storagedir(string directory)
 {
   Stdio.Stat s;

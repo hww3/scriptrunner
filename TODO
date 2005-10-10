@@ -2,5 +2,6 @@
   (started in 0.2 as psp)
 - Include some convenience functions for performing common tasks like 
     generating control mappings. (started in 0.2)
+- More efficient session handling.
 - Error checking and handling. Right now, we're running with scissors, 
 and the error messages aren't particulary nice looking.

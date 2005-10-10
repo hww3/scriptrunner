@@ -1,6 +1,10 @@
-As of version 0.2, Pike ScriptRunner can be used to run Pike Server Pages (PSP) files. PSP 
-is similar to JSP in that it allows you to mix code and content on the same page. The PSP 
-markup format is:
+As of version 0.2, Pike ScriptRunner can be used to run Pike Server Pages 
+(PSP) files. PSP is similar to JSP in that it allows you to mix code and 
+content on the same page. More information can be obtained from:
+
+http://www.gotpike.org/PikeWiki/index.pike?page=PikeApps/Pike+ScriptRunner
+
+A brief overview of the PSP markup format:
 
 <%= someexpression %>  <-- gives you some expression cast as a string.
 

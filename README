@@ -132,6 +132,13 @@ remotehost: the client's remote hostname, if available.
 
 misc: a mapping containing miscellaneous information about the request. 
 
+misc->session_variables: if set to use sessions, your script or psp page 
+will have a mapping here that you can add to and which will be maintained 
+across requests. Currently, this can not contain programs or objects.
+
+misc->session_id: if set to use sessions, this will be a string containing 
+the current session identifier.
+
 Your parse() function can run any pike code you'd like, and when you're 
 done, it should return either a string containing the HTML content to 
 return to the browser, or a "control" mapping. A control mapping is a 

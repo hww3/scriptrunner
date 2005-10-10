@@ -1,7 +1,8 @@
 Changes since version 0.2
 
 - Added "use-session" directive to allow a PSP page to participate
-  in a session. 
+  in a session. Note that this can only be specified once per file
+  (Limitation in our current PSP parser).
 
 - Added HTTP.set_cookie()
 

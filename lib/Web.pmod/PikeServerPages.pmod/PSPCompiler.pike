@@ -94,7 +94,7 @@ string parse_psp(string file, string realname)
   // now, let's render some pike!
   string pikescript = "";
   string header = "";
-  pikescript+="inherit SRPikeScript;\n";
+  pikescript+="inherit ScriptRunner.SRPikeScript;\n";
   pikescript+="private string __content_type = \"text/html\";\n";
   pikescript+="string|mapping parse(RequestID request){\n";
   pikescript+="String.Buffer out = String.Buffer();\n";
@@ -117,7 +117,7 @@ foreach(contents, Block b)
 
   header += h;
  
-  pikescript += "return HTTP.string_answer(out->get(), __content_type);\n }\n";  
+  pikescript += "return HTTP.string_answer(out->get(), __content_type, request);\n }\n";  
 
   return header + "\n\n" + pikescript;
 }
@@ -303,12 +303,9 @@ class PikeBlock
  
    int r = sscanf(exp, "%[A-Za-z0-9\-] %s", keyword, exp);
  
-   if(r!=2) 
-     throw(Error.Generic("PSP format error: invalid directive format.\n"));
- 
    switch(keyword)
    {
-     case "uses-session":
+     case "use-session":
        return process_session(exp);
        break;
 
@@ -384,7 +381,7 @@ class PikeBlock
  {
    string t;
 
-   Block b = PikeBlock("<%! __participates_in_session = 1; %>", "");
+   Block b = PikeBlock("<%! int __participates_in_session = 1; %>", "");
 
    return ({ b });
 

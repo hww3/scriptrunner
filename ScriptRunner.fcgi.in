@@ -124,8 +124,8 @@ void request_loop(int sock, int id)
 
                       r->status = 302;
                       r->_headers["location"] = request_id->misc->script_name + 
-                                                  (id->misc->path_info?("/" + id->misc->path_info):"") + 
-                                                  (id->query?("?"+id->query):"");
+                                                  (request_id->misc->path_info?("/" + request_id->misc->path_info):"") + 
+                                                  (request_id->query?("?"+request_id->query):"");
 
                       request_id->response_write_and_finish( retval_to_response(r));
                       return;

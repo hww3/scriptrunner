@@ -26,7 +26,7 @@ mapping string_answer(string result, string mimetype, RequestID id)
 mapping set_cookie(string name, string value, int expiration_timestamp, RequestID id)
 {
 
-  mapping control = ([]) ;
+  mapping control = (["_headers": ([]) ]) ;
 
   control->_headers["set-cookie"] = Protocols.HTTP.http_encode_cookie(name)+
 		      "="+Protocols.HTTP.http_encode_cookie( value )+

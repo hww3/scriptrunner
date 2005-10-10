@@ -1,11 +1,13 @@
 Changes since version 0.2
 
+- Added "use-session" directive to allow a PSP page to participate
+  in a session. 
+
 - Added HTTP.set_cookie()
 
 - Initial session support is here, only supports standard encodable
   Pike datatypes, enable with: __participates_in_session in script 
-  object. Note that we don't currently set the session cookie if 
-  it doesn't already exist (to be fixed asap).
+  object.
 
 - Added Session Manager objects
 

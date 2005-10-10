@@ -114,6 +114,7 @@ void request_loop(int sock, int id)
                     {
                       ScriptRunner.Session sess = session_manager->get_session(request_id->cookies[session_cookie_name]);
                       request_id->misc->_session = sess;
+                      request_id->misc->session_id = sess->id;
                       request_id->misc->session_variables = sess->data;
                     }
                     // if we don't have the session identifier set, we should set one.

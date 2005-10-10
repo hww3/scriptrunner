@@ -1,7 +1,7 @@
 <%@ use-session %>
 This is a session page.
 <p>
-Session: <%= request->misc->_session->id %>
+Session: <%= request->misc->session_id %>
 <p>
 <% out+=sprintf("<pre>%O</pre>\n", request->misc->session_variables); 
 %>

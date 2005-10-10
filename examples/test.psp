@@ -14,8 +14,7 @@ o123o<p>
 %>
 
 <p>
-<% out->add("SNAGGLEPUSS!");
-   out->add(Stdio.read_file("/Library/WebServer/Documents/index.html.en"));
+<% out+=("SNAGGLEPUSS!");
 %>
 this is a test of some <% out->add("pike"); %> code.
 blah

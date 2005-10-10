@@ -1,12 +1,3 @@
-From hww3@riverweb.com Tue Sep 20 17:29:16 2005
-Date: Tue, 20 Sep 2005 17:24:42 -0400 (EDT)
-From: Bill Welliver <hww3@riverweb.com>
-Reply-To: caudium-general@caudium.net
-To: pike@roxen.com, roxen@roxen.com, caudium-general@caudium.net
-Subject: [caudium-general] [Annouce] Pike ScriptRunner FastCGI
-
-Greetings!
-
 In yet another in a long string of rapid-fire ideas turned into alpha
 quality code, I'd like to annouce the availability of the Pike
 ScriptRunner. ScriptRunner is a FastCGI application that will
@@ -38,6 +29,7 @@ http://www.siriushosting.com/pike/fastcgi.html)
 Features:
 
 - Multi-threaded request handling
+- Session persistence
 - Persistent interpreter
 - Compiled object caching
 - Incoming requests are parsed and passed to you in a request id object.
@@ -45,6 +37,10 @@ Features:
   from your parse() method.
 
 Installation:
+
+Please visit the ScriptRunner page for more updated information:
+
+http://www.gotpike.org/PikeWiki/index.pike?page=PikeApps/Pike+ScriptRunner
 
 Apache users: see the file INSTALL.Apache for information on configuring 
 Apache support for FastCGI.

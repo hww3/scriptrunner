@@ -1,6 +1,6 @@
 #!/usr/local/bin/pike -Mlib
 
-constant my_version = "0.1";
+constant my_version = "0.3";
 //#define RUN_THREADED
 
 string session_storagedir = "/tmp/scriptrunner_storage";

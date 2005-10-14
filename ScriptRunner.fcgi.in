@@ -89,6 +89,7 @@ void request_loop(int sock, int id)
 #ifdef RUN_THREADED
                   key = 0;
 #endif
+		  continue;
                 }
 
                 e = catch {
@@ -103,7 +104,7 @@ void request_loop(int sock, int id)
                   {
                     request_id->response_write_and_finish("Content-type: text/html\r\n\r\n"
                                    "<h1>Compile Error</h1><pre>" + s + "</pre>");
-                    return;
+                    continue;
                   }
 		  log("running script\n");
 
@@ -129,7 +130,7 @@ void request_loop(int sock, int id)
                                                   (request_id->query?("?"+request_id->query):""));
 
                       request_id->response_write_and_finish( retval_to_response(r));
-                      return;
+                      continue;
                     }
                   }
 

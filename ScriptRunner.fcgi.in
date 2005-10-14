@@ -124,9 +124,9 @@ void request_loop(int sock, int id)
                                                   session_manager->new_sessionid(), time() + session_timeout, request_id);
 
                       r->status = 302;
-                      r->_headers["location"] = request_id->misc->script_name + 
+                      r->_headers["location"] = combine_path(request_id->misc->script_name + 
                                                   (request_id->misc->path_info?("/" + request_id->misc->path_info):"") + 
-                                                  (request_id->query?("?"+request_id->query):"");
+                                                  (request_id->query?("?"+request_id->query):""));
 
                       request_id->response_write_and_finish( retval_to_response(r));
                       return;
@@ -190,6 +190,9 @@ string|object get_script(string path, object id)
   string code;
   program p;
   Stdio.Stat stat;
+
+// do we need this after all?
+//  path = combine_path(path);
 
   stat = file_stat(path);
 

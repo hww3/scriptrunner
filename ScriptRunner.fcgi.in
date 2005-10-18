@@ -14,7 +14,7 @@ int shutdown = 0;
 int requests = 0;
 mapping compiled_scripts = ([]);
 
-ScriptRunner.SessionManager session_manager;
+Session.SessionManager session_manager;
 
 
 //!  the main function of scriptrunner
@@ -34,8 +34,8 @@ int main(int argc, array(string) argv)
   write("Running in threaded mode.\n");
 #endif
 
-  session_manager = ScriptRunner.SessionManager();
-  ScriptRunner.SessionStorage s = ScriptRunner.FileSessionStorage();
+  session_manager = Session.SessionManager();
+  Session.SessionStorage s = Session.FileSessionStorage();
   s->set_storagedir(session_storagedir);
   session_manager->set_default_timeout(session_timeout);
   session_manager->set_cleaner_interval(session_timeout);
@@ -43,7 +43,7 @@ int main(int argc, array(string) argv)
 
  
   add_constant("RequestID", ScriptRunner.RequestID);
-  add_constant("Session", ScriptRunner.Session);
+  add_constant("Session", Session.Session);
   add_constant("session_manager", session_manager);
   // ok, our first attempt at session management.
 
@@ -123,7 +123,7 @@ void request_loop(int sock, int id)
                       || request_id->variables[session_cookie_name] )
                     {
                       string ssid=request_id->cookies[session_cookie_name]||request_id->variables[session_cookie_name];
-                      ScriptRunner.Session sess = session_manager->get_session(ssid);
+                      Session.Session sess = session_manager->get_session(ssid);
                       request_id->misc->_session = sess;
                       request_id->misc->session_id = sess->id;
                       request_id->misc->session_variables = sess->data;

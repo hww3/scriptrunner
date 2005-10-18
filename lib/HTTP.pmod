@@ -34,3 +34,14 @@ mapping set_cookie(string name, string value, int expiration_timestamp, RequestI
 
   return control;
 }
+
+string encode(string s)
+{
+   string s2 = "";
+   
+   foreach((array)s;;int c)
+   {
+      s2+="&#" + c + ";";
+   }
+   return s2;
+}

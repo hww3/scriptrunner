@@ -1,4 +1,5 @@
 #!/usr/local/bin/pike -Mlib
+//#!/sw/bin/pike -M/Library/WebServer/Documents/scriptrunner/lib -P/Library/WebServer/Documents/scriptrunner/lib
 
 constant my_version = "0.3";
 //#define RUN_THREADED
@@ -7,7 +8,6 @@ string session_storagedir = "/tmp/scriptrunner_storage";
 string logfile_path = "/tmp/scriptrunner.log";
 string session_cookie_name = "PSESSIONID";
 int session_timeout = 3600;
-
 Stdio.File f;
 Stdio.File logfile;
 int shutdown = 0;
@@ -16,11 +16,19 @@ mapping compiled_scripts = ([]);
 
 ScriptRunner.SessionManager session_manager;
 
+
+//!  the main function of scriptrunner
+//!  
+//!  @returns
+//!    0 on successful exit (doesn't normally happen on its own)
+//!
 int main(int argc, array(string) argv)
 {
   int sock;
 
   write("ScriptRunner " + my_version + " starting.\n");
+
+  
 
 #ifdef RUN_THREADED
   write("Running in threaded mode.\n");
@@ -186,6 +194,12 @@ void request_loop(int sock, int id)
 	} while(!shutdown);
 }
 
+
+//!  given a path to a script, this function will return the instantiated script
+//!   
+//!  @returns
+//!   the script object, or a string describing the failure, if unsuccessful. 
+//!
 string|object get_script(string path, object id)
 {
   string code;

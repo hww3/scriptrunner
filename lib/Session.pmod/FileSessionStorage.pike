@@ -1,6 +1,8 @@
 import ScriptRunner;
 inherit SessionStorage;
 
+int writing_session = 0;
+
 static string storage_dir;
 
 void create()
@@ -21,8 +23,12 @@ void clean_sessions(int default_timeout)
     }
     else if(!s && sizeof(get_dir(dir+file)) == 0)
     {
-      werror("deleting empty directory " + dir+file + "\n");
-      Stdio.recursive_rm(dir+file);
+      // this is a really bad way to do this...
+      if(!writing_session)
+      {
+        werror("deleting empty directory " + dir+file + "\n");
+        Stdio.recursive_rm(dir+file);
+      }
     }
   }
 
@@ -88,6 +94,7 @@ void set(string sessionid, Session data, int timeout)
 {
  string sessionfile;
 
+ writing_session = 1;
  if(data->get_attr("FileSessionPath"))
  {
    sessionfile = data->get_attr("FileSessionPath");
@@ -110,8 +117,9 @@ if(!sessionfile)
   werror("Sessionfile not set! not saving session.\n");
   return;
 }
- Stdio.write_file(sessionfile, d);
 
+   Stdio.write_file(sessionfile, d);
+ writing_session = 0;
  return;
 }
 

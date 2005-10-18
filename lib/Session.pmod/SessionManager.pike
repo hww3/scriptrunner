@@ -1,5 +1,3 @@
-import ScriptRunner;
-
 // our default timeout is 1 hour.
 static int default_timeout = 3600;
 static int cleaner_interval = 3600;
@@ -17,7 +15,7 @@ void session_cleaner()
   do
   {
     werror("starting cleaner run.\n");
-    foreach(session_storage;; SessionStorage engine)
+    foreach(session_storage;; .SessionStorage engine)
     {
       engine->clean_sessions(default_timeout);
     } 
@@ -58,7 +56,7 @@ int expunge_session(string sessionid)
 {
   int rv;
 
-  foreach(session_storage;; SessionStorage engine)
+  foreach(session_storage;; .SessionStorage engine)
   {
     rv|=engine->expunge(sessionid);
   }
@@ -69,19 +67,19 @@ int expunge_session(string sessionid)
 
 Session get_session(string sessionid)
 {
-  foreach(session_storage;; SessionStorage engine)
+  foreach(session_storage;; .SessionStorage engine)
   {
     Session s = engine->get(sessionid);
 
     if(s) return s;
   }
 
-  return Session(sessionid);
+  return .Session(sessionid);
 }
 
-void set_session(string sessionid, Session session_data, int timeout)
+void set_session(string sessionid, .Session session_data, int timeout)
 {
-  foreach(session_storage;; SessionStorage engine)
+  foreach(session_storage;; .SessionStorage engine)
   {
     engine->set(sessionid, session_data, timeout);
   }

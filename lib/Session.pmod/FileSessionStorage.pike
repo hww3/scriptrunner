@@ -1,5 +1,4 @@
-import ScriptRunner;
-inherit SessionStorage;
+inherit .SessionStorage;
 
 int writing_session = 0;
 
@@ -50,7 +49,7 @@ mixed get(string sessionid)
   string p;
   string sessionfile;
   mixed d;  
-  Session data;
+  .Session data;
 
   [p, sessionfile] = sessionfile_from_session(sessionid);
 
@@ -64,7 +63,7 @@ mixed get(string sessionid)
   d = decode_value(p);
 
   if(d)
-    data = Session(sessionid);
+    data = .Session(sessionid);
 
   data->data = d;
   data->set_attr("FileSessionPath", sessionfile);
@@ -90,7 +89,7 @@ int expunge(string sessionid)
 
 }
 
-void set(string sessionid, Session data, int timeout)
+void set(string sessionid, .Session data, int timeout)
 {
  string sessionfile;
 

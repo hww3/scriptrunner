@@ -1,4 +1,3 @@
-import ScriptRunner;
 
 void create()
 {
@@ -6,7 +5,7 @@ void create()
 }
 
 void clean_sessions(int default_timeout);
-Session get(string sessionid);
+.Session get(string sessionid);
 int expunge(string sessionid);
-void set(string sessionid, Session data, int timeout);
+void set(string sessionid, .Session data, int timeout);
 

@@ -101,7 +101,6 @@ void request_loop(int sock, int id)
                 }
 
                 e = catch {
-
                 // do we have a script file passed?
                 if(request_id->misc && request_id->misc->path_info && 
                        sizeof(request_id->misc->path_info))
@@ -114,14 +113,17 @@ void request_loop(int sock, int id)
                                    "<h1>Compile Error</h1><pre>" + s + "</pre>");
                     continue;
                   }
-		  log("running script\n");
+		  log("running script %s\n",(request_id->misc->request_uri||""));
 
                   // do we need to load up a session?
                   if(s["__participates_in_session"] && s["__participates_in_session"] != 0)
                   {
-                    if(request_id->cookies && request_id->cookies[session_cookie_name])
+		    // Do we have either the session cookie or the PSESSIONID var?
+                    if(request_id->cookies && request_id->cookies[session_cookie_name] 
+                      || request_id->variables[session_cookie_name] )
                     {
-                      ScriptRunner.Session sess = session_manager->get_session(request_id->cookies[session_cookie_name]);
+                      string ssid=request_id->cookies[session_cookie_name]||request_id->variables[session_cookie_name];
+                      ScriptRunner.Session sess = session_manager->get_session(ssid);
                       request_id->misc->_session = sess;
                       request_id->misc->session_id = sess->id;
                       request_id->misc->session_variables = sess->data;
@@ -129,14 +131,19 @@ void request_loop(int sock, int id)
                     // if we don't have the session identifier set, we should set one.
                     else 
                     {
+		      string ssid=session_manager->new_sessionid();
                       mapping r = HTTP.set_cookie(session_cookie_name, 
-                                                  session_manager->new_sessionid(), time() + session_timeout, request_id);
-
+                                                  ssid, time() + session_timeout, request_id);
                       r->status = 302;
-                      r->_headers["location"] = combine_path(request_id->misc->script_name + 
-                                                  (request_id->misc->path_info?("/" + request_id->misc->path_info):"") + 
-                                                  (request_id->query?("?"+request_id->query):""));
+                      
+		      string req=combine_path(request_id->misc->script_name,request_id->misc->path_info);
+		      req += "?PSESSIONID="+ssid;
+		      if( sizeof(request_id->query) )  {
+		      	req += "&"+request_id->query;
+		      }
+                      r->_headers["location"] = req;
 
+		      log( "Created new session sid='%s' host='%s'\n",ssid,request_id->remoteaddr);
                       request_id->response_write_and_finish( retval_to_response(r));
                       continue;
                     }

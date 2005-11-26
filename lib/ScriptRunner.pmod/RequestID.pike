@@ -7,7 +7,7 @@ import Protocols.HTTP.Server;
 mapping (string:string) variables = ([ ]);
 mapping (string:mixed) misc = ([ ]);
 
-string query, rest_query;
+string query, not_query, rest_query;
 static string data;
 
 static object fast_cgi_request;
@@ -221,6 +221,7 @@ void create(object fcgir)
   if(stringp(contents) && strlen(contents))
     pragma |= aggregate_multiset(@replace(contents, " ", "")/ ",");
 
+  not_query = getenv("REQUEST_URI");
   query = getenv("QUERY_STRING");
   method = getenv("REQUEST_METHOD") || "GET";
   prot = getenv("SERVER_PROTOCOL");

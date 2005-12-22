@@ -65,11 +65,11 @@ int expunge_session(string sessionid)
 
 }
 
-Session get_session(string sessionid)
+.Session get_session(string sessionid)
 {
   foreach(session_storage;; .SessionStorage engine)
   {
-    Session s = engine->get(sessionid);
+    .Session s = engine->get(sessionid);
 
     if(s) return s;
   }

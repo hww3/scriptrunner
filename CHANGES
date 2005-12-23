@@ -1,3 +1,12 @@
+Changes since version 0.3
+
+- Added option for storing session data in a RAM or SQLite database. The
+  SQLite option requires the Sql.Provider.SQLite module. Choose the 
+  session storage method by setting the session_storagetype variable
+  to one of "file", "ram" or "sqlite". The default is RAM, though for 
+  installations which involve multiple simultaneous instances of 
+  ScriptRunner, either "file" or "sqlite" storage will be necessary.
+
 Changes since version 0.2
 
 - Added "use-session" directive to allow a PSP page to participate

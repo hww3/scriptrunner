@@ -1,5 +1,6 @@
 Changes since version 0.3
 
+- More comprehensive Apache documentation.
 - Simple installation instructions in INSTALL.
 - Added configuration script and a simple Makefile for installing
   ScriptRunner. 

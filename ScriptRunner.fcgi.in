@@ -1,6 +1,6 @@
 #!@PIKE@ -M@prefix@/scriptrunner/lib -P@prefix@/scriptrunner/lib
 
-constant my_version = "0.3";
+constant my_version = "0.4";
 //#define RUN_THREADED
 
 string session_storagetype = "ram";

@@ -28,10 +28,24 @@ Options ... ExecCGI
      AddHandler fastcgi-script fcgi
  </IfModule>
 
-5. Copy the ScriptRunner directory into your Apache document root.
+5. Run the ScriptRunner configure script, optionally passing 
+--prefix and --with-pike options.
 
-6. You may want to use mod_rewrite to rewrite incoming requests or 
-mod_actions to trigger ScriptRunner to process your pike scripts.
+6. Install the application by running "make install"
+
+7. Create a symbolic link (if necessary) from the installed 
+ScriptRunner.fcgi to a location within your webserver's document root (not 
+necessary for all types of installation. Whether or not you need to do 
+this will be determined by your FastCGI configuration.
+
+8. You may want to use mod_rewrite to rewrite incoming requests 
+or mod_actions to trigger ScriptRunner to process your pike scripts.
+
+I use the following rewrite rules (more or less):
+
+RewriteRule (.*.pike) /ScriptRunner.fcgi$1 [L]
+RewriteRule (.*.psp) /ScriptRunner.fcgi$1 [L]
+
 
 Note that there are many configuration options for mod_fastcgi, and these 
 are only a suggestion (and perhaps not a good one at that!) Comments and 

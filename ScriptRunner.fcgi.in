@@ -1,4 +1,4 @@
-#!/usr/local/pike/7.6.50/bin/pike -M/usr/local/scriptrunner/lib -P/usr/local/scriptrunner/lib
+#!@PIKE@ -M@prefix@/scriptrunner/lib -P@prefix@/scriptrunner/lib
 
 constant my_version = "0.3";
 //#define RUN_THREADED

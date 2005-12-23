@@ -1,11 +1,11 @@
-#!/usr/local/bin/pike -Mlib
-//#!/sw/bin/pike -M/Library/WebServer/Documents/scriptrunner/lib -P/Library/WebServer/Documents/scriptrunner/lib
+#!/usr/local/pike/7.6.50/bin/pike -M/usr/local/scriptrunner/lib -P/usr/local/scriptrunner/lib
 
 constant my_version = "0.3";
 //#define RUN_THREADED
 
-string session_storagetype = "sqlite";
-string session_storagedir = "/tmp/scriptrunner_storage.db";
+string session_storagetype = "ram";
+//string session_storagetype = "sqlite";
+//string session_storagedir = "/tmp/scriptrunner_storage.db";
 //string session_storagetype = "file";
 //string session_storagedir = "/tmp/scriptrunner_storage";
 string logfile_path = "/tmp/scriptrunner.log";

@@ -1,0 +1,19 @@
+installation steps (quick and dirty)
+
+1. install libfcgi, available from www.fastcgi.com
+2. install pike 7.6.24 or newer, available from pike.ida.liu.se
+3. install Public.Web.FCGI, using this command (as root, if necessary):
+   /path/to/pike -x monger --install Public.Web.FCGI
+4. configure scriptrunner using the provided configure script
+   ./configure [--prefix=/install/to] [--with-pike=/particular/pike/path]
+5. install (again, as root if necessary):
+   make install
+6. Configure webserver of your choice
+   information on configuring Apache for FastCGI is available in 
+   the document titled INSTALL.Apache
+
+   if your webserver requires the script to be within the document root, 
+   you can just make a symbolic link like this:
+
+   ln -s /installed/scriptrunner/ScriptRunner.fcgi /web/dir/ScriptRunner.fcgi
+7. adjust any settings in ScriptRunner as necessary

@@ -1,0 +1,16 @@
+PIKE=@PIKE@
+PREFIX=@prefix@
+INSTALLLOC=@prefix@/scriptrunner
+INSTALL=@INSTALL@
+MKDIR=@MKDIR@
+CP=@CP@
+
+install:
+	$(MKDIR) -p $(INSTALLLOC)
+	$(MKDIR) -p $(INSTALLLOC)/doc
+	$(INSTALL) ScriptRunner.fcgi $(INSTALLLOC)
+	$(CP) -rf lib $(INSTALLLOC)
+	for x in CHANGES CREDITS README README.PSP TODO INSTALL INSTALL.Apache; do \
+	$(INSTALL) "$${x}" $(INSTALLLOC)/doc; \
+	done
+

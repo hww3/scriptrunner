@@ -42,18 +42,14 @@ Please visit the ScriptRunner page for more updated information:
 
 http://www.gotpike.org/PikeWiki/index.pike?page=PikeApps/Pike+ScriptRunner
 
+Basic installation instructions are located in the file INSTALL.
+
 Apache users: see the file INSTALL.Apache for information on configuring 
 Apache support for FastCGI.
 
 Get the snapshot tarball here:
 
 http://buoy.riverweb.com:8080/viewrep/cvs/scriptrunner
-
-Simply copy the scriptrunner files to a FastCGI enabled web server (it's 
-recommended that you just copy the whole ScriptRunner directory. 
-
-Edit the scriptrunner application to specify an optional log file 
-(recommended).
 
 Add a redirect to convert all requests to (*.pike) to
 /path/to/scriptrunner.fcgi($1) (actual syntax will vary based on the
@@ -81,9 +77,7 @@ you could use mod_actions to do the same thing:
 
 In the long run, this may be a simpler option.
 
-
 Some example scripts are included to give you a head start. 
-
 
 Writing Pike Scripts:
 

@@ -1,0 +1,27 @@
+# Process this file with autoconf to produce a configure script.
+AC_INIT(ScriptRunner, 0.4, hww3@riverweb.com)
+AC_CONFIG_SRCDIR([ScriptRunner.fcgi.in])
+
+# Checks for programs.
+AC_PROG_AWK
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PATH_PROG(CP, cp)
+AC_PATH_PROG(MKDIR, mkdir)
+
+REQ_PIKE_MAJOR=7
+REQ_PIKE_MINOR=6
+REQ_PIKE_BUILD=24
+
+AP_CHECK_PIKE(7.6.24)
+
+# Checks for header files.
+
+# Checks for library functions.
+
+AC_CONFIG_FILES([ 
+	ScriptRunner.fcgi
+	Makefile
+                 ])
+AC_OUTPUT

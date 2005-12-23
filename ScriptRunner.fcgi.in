@@ -4,10 +4,14 @@ constant my_version = "0.3";
 //#define RUN_THREADED
 
 string session_storagetype = "ram";
+string session_storagedir = ""; // not required for ram storage.
+
 //string session_storagetype = "sqlite";
 //string session_storagedir = "/tmp/scriptrunner_storage.db";
+
 //string session_storagetype = "file";
 //string session_storagedir = "/tmp/scriptrunner_storage";
+
 string logfile_path = "/tmp/scriptrunner.log";
 string session_cookie_name = "PSESSIONID";
 int session_timeout = 3600;

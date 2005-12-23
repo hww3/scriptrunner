@@ -1,5 +1,8 @@
 Changes since version 0.3
 
+- Simple installation instructions in INSTALL.
+- Added configuration script and a simple Makefile for installing
+  ScriptRunner. 
 - Added option for storing session data in a RAM or SQLite database. The
   SQLite option requires the Sql.Provider.SQLite module. Choose the 
   session storage method by setting the session_storagetype variable

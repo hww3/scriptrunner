@@ -1,3 +1,9 @@
+Changes since version 0.4
+
+- Generalized the runner interface.
+- Added -p option to specify a listen port
+- Moved to Tools.Logging for logging
+
 Changes since version 0.3
 
 - More comprehensive Apache documentation.

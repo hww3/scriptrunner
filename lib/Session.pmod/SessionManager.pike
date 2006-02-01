@@ -1,3 +1,5 @@
+import Tools.Logging;
+
 // our default timeout is 1 hour.
 static int default_timeout = 3600;
 static int cleaner_interval = 3600;
@@ -14,7 +16,7 @@ void session_cleaner()
 
   do
   {
-    werror("starting cleaner run.\n");
+    Log.debug("starting cleaner run.");
     foreach(session_storage;; .SessionStorage engine)
     {
       engine->clean_sessions(default_timeout);

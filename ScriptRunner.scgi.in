@@ -21,7 +21,7 @@ string logfile_path = "/tmp/scriptrunner.log";
 string session_cookie_name = "PSESSIONID";
 int session_timeout = 3600;
 
-string mode = "FastCGI";
+string mode = "SCGI";
 
 int my_port = 9999;
 
@@ -29,6 +29,7 @@ Stdio.Port port;
 
 int start_listener(int port)
 {
+  Log.info("Starting listener on port %d.", (int)port);
   this->port = Stdio.Port(port, answer_call);
   return -1;
 }
@@ -52,6 +53,6 @@ void answer_call(int sock, int id)
     throw(e);
     return;
   }
-  handle_request(request_id);
+  handle_request(request_id, id);
 
 }

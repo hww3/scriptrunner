@@ -9,6 +9,7 @@ install:
 	$(MKDIR) -p $(INSTALLLOC)
 	$(MKDIR) -p $(INSTALLLOC)/doc
 	$(INSTALL) ScriptRunner.fcgi $(INSTALLLOC)
+	$(INSTALL) ScriptRunner.scgi $(INSTALLLOC)
 	$(CP) -rf lib $(INSTALLLOC)
 	for x in CHANGES CREDITS README README.PSP TODO INSTALL INSTALL.Apache; do \
 	$(INSTALL) "$${x}" $(INSTALLLOC)/doc; \

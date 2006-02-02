@@ -22,6 +22,7 @@ AP_CHECK_PIKE(7.6.24)
 
 AC_CONFIG_FILES([ 
 	ScriptRunner.fcgi
+	ScriptRunner.scgi
 	Makefile
                  ])
 AC_OUTPUT

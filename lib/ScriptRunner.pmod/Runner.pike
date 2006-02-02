@@ -99,11 +99,14 @@ void handle_request(object request_id, int id)
 
                 e = catch {
                 // do we have a script file passed?
-                if(request_id->misc && request_id->misc->path_info && 
-                       sizeof(request_id->misc->path_info))
+                if(request_id->misc && ((request_id->misc->path_info && 
+                       sizeof(request_id->misc->path_info))||( 
+request_id->misc->script_filename && sizeof(request_id->misc->script_filename)) ))
                 {
                    object|string s;
-                  s = get_script(request_id->misc->path_translated, request_id);
+                   string sp = (request_id->misc->path_translated ||
+                                    request_id->misc->script_filename);
+                  s = get_script(sp, request_id);
                   if(stringp(s))
                   {
                     request_id->response_write_and_finish("Content-type: text/html\r\n\r\n"

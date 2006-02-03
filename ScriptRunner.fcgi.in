@@ -1,6 +1,5 @@
 #!@PIKE@ -M@prefix@/scriptrunner/lib -P@prefix@/scriptrunner/lib
 
-<<<<<<< ScriptRunner.fcgi.in
 import Tools.Logging;
 
 inherit ScriptRunner.Runner;
@@ -89,6 +88,6 @@ void request_loop(int sock, int id)
 		  continue;
                 }
 
-                handle_request(request, id);
+                handle_request(request_id, id);
           } while (!shutdown);
 }

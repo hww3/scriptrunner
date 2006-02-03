@@ -3,6 +3,7 @@ Changes since version 0.4
 - Generalized the runner interface.
 - Added -p option to specify a listen port
 - Moved to Tools.Logging for logging
+- Added SCGI support
 
 Changes since version 0.3
 

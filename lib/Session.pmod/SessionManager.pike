@@ -47,7 +47,7 @@ void set_cleaner_interval(int seconds)
 string new_sessionid()
 {
   object md5 = Crypto.MD5();
-  md5->update(Crypto.randomness.reasonably_random()->read(8));
+  md5->update(Crypto.Random.random_string(8));
   md5->update(sprintf("%d", time(1)));
 
   return String.string2hex(md5->digest()[..9]);

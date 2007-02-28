@@ -81,10 +81,9 @@ void session_startup()
     s = Session.FileSessionStorage();
     s->set_storagedir(session_storagedir);
   }
-  else if(session_storagetype == "sqlite")
+  else if(session_storagetype == "ram")
   {
-    s = Session.SQLiteSessionStorage();
-    s->set_storagedir(session_storagedir);
+    s = Session.RAMSessionStorage();
   }
   session_manager->set_default_timeout(session_timeout);
   session_manager->set_cleaner_interval(session_timeout);

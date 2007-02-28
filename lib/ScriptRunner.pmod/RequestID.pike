@@ -40,7 +40,7 @@ void response_write_and_finish(mixed ... args)
 
    e = catch{
 
-        fast_cgi_request->write(@args);
+        fast_cgi_request->real_write(@args);
         fast_cgi_request->finish();
 };
 

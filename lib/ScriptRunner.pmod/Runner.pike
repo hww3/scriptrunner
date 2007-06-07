@@ -51,7 +51,7 @@ int main(int argc, array(string) argv)
                 break;
 
               case "port":
-                my_port = opt[1];
+                my_port = (int)opt[1];
                 break;
 
       }

@@ -1,3 +1,4 @@
+- mutex verification
 - Add an inline code processor for things like <? somepikecodehere ?> 
   (started in 0.2 as psp)
 - Include some convenience functions for performing common tasks like 
